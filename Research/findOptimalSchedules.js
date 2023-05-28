@@ -60,7 +60,7 @@ class Datacenter {
       makespan += this.cloudlets[i].length;
     }
 
-    // Convert the Python code to JavaScript.
+    // Converted the Python code to JavaScript.
     const busy_time = {};
     for (const task of this.cloudlets) {
       if (!busy_time[task]) {
@@ -70,7 +70,7 @@ class Datacenter {
       }
     }
 
-    // Return the maximum busy time.
+    // Returns the maximum busy time.
     return Math.max(...busy_time.values());
   }
 }
@@ -91,7 +91,7 @@ class VM {
       makespan += cloudlet.length / this.mips;
     }
 
-    // Convert the Python code to JavaScript.
+    // Converted the Python code to JavaScript.
     const busy_time = {};
     for (const task of this.cloudlets) {
       if (!busy_time[task]) {
@@ -101,7 +101,7 @@ class VM {
       }
     }
 
-    // Return the maximum busy time.
+    
     return Math.max(...busy_time.values());
   }
 }
@@ -114,7 +114,7 @@ class OrderedPerformanceCurve {
 
   plot() {
     console.log("Plotting the makespans:", this.makespans);
-    // Plot the makespans on a graph.
+    
   }
 
   getAverageMakespan() {
@@ -128,10 +128,10 @@ class OrderedPerformanceCurve {
 }
 
 function findOptimalSchedules(cloudlets) {
-  // Create a list of all possible schedules.
+  
   const allSchedules = [];
 
-  // Recursively generate all possible schedules.
+ 
   function generateSchedules(cloudlets, currentSchedule) {
     if (cloudlets.length === 0) {
       allSchedules.push(currentSchedule);
@@ -144,14 +144,14 @@ function findOptimalSchedules(cloudlets) {
     }
   }
 
-  // Sort the schedules by makespan.
+ 
   generateSchedules(cloudlets, []);
   allSchedules.sort((a, b) => a.makespan - b.makespan);
 
-  // Find the minimum makespan.
+  
   let minMakespan = allSchedules[0].makespan;
 
-  // Find the optimal schedules.
+ 
   const optimalSchedules = [];
   for (const schedule of allSchedules) {
     if (schedule.makespan === minMakespan) {
@@ -159,7 +159,7 @@ function findOptimalSchedules(cloudlets) {
     }
   }
 
-  // Return the optimal schedules.
+
   return optimalSchedules;
 }
 
