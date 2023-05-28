@@ -17,7 +17,19 @@ class Datacenter {
     for (let i = 0; i < this.cloudlets.length; i++) {
       makespan += this.cloudlets[i].length;
     }
-    return makespan;
+
+    // Convert the Python code to JavaScript.
+    const busy_time = {};
+    for (const task of this.cloudlets) {
+      if (!busy_time[task]) {
+        busy_time[task] = task.length / this.cloudlets.mips;
+      } else {
+        busy_time[task] += task.length / this.cloudlets.mips;
+      }
+    }
+
+    // Return the maximum busy time.
+    return Math.max(...Object.values(busy_time));
   }
 }
 
@@ -31,11 +43,23 @@ class VM {
   }
 
   getMakespan() {
-    const makespan = 0;
-    for (const cloudlet of this.cloudlets) {
-      makespan += cloudlet.processingTime / this.mips;
+    let makespan = 0;
+    for (let i = 0; i < this.cloudlets.length; i++) {
+      makespan += this.cloudlets[i].length;
     }
-    return makespan;
+
+    // Convert the Python code to JavaScript.
+    const busy_time = {};
+    for (const task of this.cloudlets) {
+      if (!busy_time[task]) {
+        busy_time[task] = task.length / this.cloudlets.mips;
+      } else {
+        busy_time[task] += task.length / this.cloudlets.mips;
+      }
+    }
+
+    // Return the maximum busy time.
+    return Math.max(...Object.values(busy_time));
   }
 }
 
@@ -44,76 +68,83 @@ class OrderedPerformanceCurve {
     this.makespans = makespans;
   }
 
-  plot() {}
+  plot() {
+    
+  }
 
-  getAverageMakespan() {}
+  getAverageMakespan() {
+    
+  }
 }
 
-function findOptimalSchedulesGreedy(cloudlets) {
+function findOptimalSchedules(cloudlets, datacenters) {
+
+  // Sort the cloudlets by deadline.
   cloudlets.sort((a, b) => a.deadline - b.deadline);
 
-  const datacenters = [];
-  for (let i = 0; i < cloudlets.length; i++) {
-    datacenters.push(new Datacenter());
-  }
-
-  const vms = [];
-  for (let i = 0; i < cloudlets.length; i++) {
-    vms.push(new VM(cloudlets[i].mips));
-  }
-
-  for (let i = 0; i < cloudlets.length; i++) {
-    datacenters[i].addCloudlet(cloudlets[i]);
-  }
-
-  const makespans = [];
+  // Initialize the makespans array.
+  let makespans = [];
   for (let i = 0; i < datacenters.length; i++) {
-    makespans.push(datacenters[i].getMakespan());
+    makespans.push(datacenters[i].makespan);
   }
 
-  let minMakespan = makespans[0];
-  for (let i = 1; i < makespans.length; i++) {
-    if (makespans[i] < minMakespan) {
-      minMakespan = makespans[i];
-    }
-  }
-
-  // Find the optimal schedules.
+  // Initialize the optimal schedules array.
   const optimalSchedules = [];
-  for (let i = 0; i < makespans.length; i++) {
-    if (makespans[i] == minMakespan) {
-      optimalSchedules.push(datacenters[i]);
+
+  // Iterate through the cloudlets.
+  for (let i = 0; i < cloudlets.length; i++) {
+
+    // Find the datacenter with the minimum makespan.
+    const minMakespan = Math.min(...makespans);
+
+    // Assign the cloudlet to the datacenter with the minimum makespan.
+    optimalSchedules.push({
+      "cloudlet": cloudlets[i],
+      "datacenter": datacenters[makespans.indexOf(minMakespan)]
+    });
+
+    // Update the makespans array.
+    makespans = [];
+    for (let j = 0; j < datacenters.length; j++) {
+      makespans.push(datacenters[j].makespan);
     }
   }
 
-  // Print the output, not workifn right now
-
-  console.log("The minimum makespan is", minMakespan);
-  console.log("The optimal schedules are:");
-  for (const optimalSchedule of optimalSchedules) {
-    console.log(optimalSchedule);
-  }
-
+  // Return the optimal schedules.
   return optimalSchedules;
 }
 
+
 const cloudlets = [
   {
-    length: 1,
-    deadline: 2,
+    "length": 1,
+    "deadline": 2
   },
   {
-    length: 2,
-    deadline: 3,
+    "length": 2,
+    "deadline": 3
   },
   {
-    length: 3,
-    deadline: 4,
-  },
+    "length": 3,
+    "deadline": 4
+  }
 ];
 
-// Find the optimal schedules.
-const optimalSchedules = findOptimalSchedulesGreedy(cloudlets);
+const datacenters = [
+  {
+    "capacity": 1,
+    "makespan": 1
+  },
+  {
+    "capacity": 2,
+    "makespan": 2
+  },
+  {
+    "capacity": 3,
+    "makespan": 3
+  }
+];
 
-//output.
+const optimalSchedules = findOptimalSchedules(cloudlets, datacenters);
+
 console.log(optimalSchedules);
