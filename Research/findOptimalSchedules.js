@@ -18,7 +18,7 @@ class Datacenter {
       makespan += this.cloudlets[i].length;
     }
 
-    // Convert the Python code to JavaScript.
+    // Converted code
     const busy_time = {};
     for (const task of this.cloudlets) {
       if (!busy_time[task]) {
@@ -48,7 +48,7 @@ class VM {
       makespan += this.cloudlets[i].length;
     }
 
-    // Convert the Python code to JavaScript.
+    // Converted code
     const busy_time = {};
     for (const task of this.cloudlets) {
       if (!busy_time[task]) {
@@ -58,7 +58,7 @@ class VM {
       }
     }
 
-    // Return the maximum busy time.
+   
     return Math.max(...Object.values(busy_time));
   }
 }
@@ -79,22 +79,22 @@ class OrderedPerformanceCurve {
 
 function findOptimalSchedules(cloudlets, datacenters) {
 
-  // Sort the cloudlets by deadline.
+ 
   cloudlets.sort((a, b) => a.deadline - b.deadline);
 
-  // Initialize the makespans array.
+ 
   let makespans = [];
   for (let i = 0; i < datacenters.length; i++) {
     makespans.push(datacenters[i].makespan);
   }
 
-  // Initialize the optimal schedules array.
+  
   const optimalSchedules = [];
 
-  // Iterate through the cloudlets.
+
   for (let i = 0; i < cloudlets.length; i++) {
 
-    // Find the datacenter with the minimum makespan.
+   
     const minMakespan = Math.min(...makespans);
 
     // Assign the cloudlet to the datacenter with the minimum makespan.
@@ -103,7 +103,7 @@ function findOptimalSchedules(cloudlets, datacenters) {
       "datacenter": datacenters[makespans.indexOf(minMakespan)]
     });
 
-    // Update the makespans array.
+   
     makespans = [];
     for (let j = 0; j < datacenters.length; j++) {
       makespans.push(datacenters[j].makespan);
