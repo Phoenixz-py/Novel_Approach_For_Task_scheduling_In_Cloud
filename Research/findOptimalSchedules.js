@@ -28,7 +28,7 @@ class Datacenter {
       }
     }
 
-    // Return the maximum busy time.
+   
     return Math.max(...Object.values(busy_time));
   }
 }
