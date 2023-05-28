@@ -127,7 +127,7 @@ class OrderedPerformanceCurve {
   }
 }
 
-function findOptimalSchedulesBranchAndBound(cloudlets) {
+function findOptimalSchedules(cloudlets) {
   // Create a list of all possible schedules.
   const allSchedules = [];
 
@@ -182,6 +182,6 @@ const cloudlets = [
   },
 ];
 
-const optimalSchedules = findOptimalSchedulesBranchAndBound(cloudlets);
+const optimalSchedules = findOptimalSchedules(cloudlets);
 
 console.log(optimalSchedules);
