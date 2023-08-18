@@ -33,27 +33,28 @@ class Group:
     chromosomes = []
     vms = []
     tasks = []
-    n_chromosomes = 3
+    n_chromosomes = 0
 
-    def __init__(self, vmlist=None, tasklist=None):
+    def __init__(self, vmlist=None, tasklist=None, n_chromosomes=3):
+        self.n_chromosomes = n_chromosomes
         self.vms = vmlist
         self.tasks = tasklist
     # def __str__(self):
 
 
-def calc_makespan(chromosome):
+def calc_makespan(chromosomes):
     busy_time = {}
-    for task in chromosome:
+    for task in chromosomes:
         if task not in busy_time:
-            busy_time[chromosome[task]] = task.length / chromosome[task].mips
+            busy_time[chromosomes[task]] = task.length / chromosomes[task].mips
         else:
-            busy_time[chromosome[task]] += task.length / chromosome[task].mips
+            busy_time[chromosomes[task]] += task.length / chromosomes[task].mips
     return max(busy_time.values())
 
 
 tasks = []
-n_tasks = 5
-n_vms = 3
+n_tasks = 5  # input1
+n_vms = 3  # input2
 vms = []
 j = 0
 for i in range(n_tasks):
@@ -82,7 +83,7 @@ print("""
 
 
 n_groups = 1
-group_list = [Group()]
+group_list = [Group(3)]  # main input
 tg = n_tasks // n_groups
 
 for g in group_list:
@@ -142,31 +143,31 @@ for g in group_list:
         # two -point crossover has been done
         print("""
         CrossOver Process """)
-        for i in range(0, g.n_chromosomes-1, 2):
+        for i in range(0, g.n_chromosomes - 1, 2):
             cr_point = random.randrange(0, len(g.tasks) - 2)
             print(" CrossOver Point = ", cr_point)
             print(f""" Before CrossOver 
             in Chromosome[{i}]
             {g.chromosomes[i]}
             C1 = {g.tasks[cr_point]} : {g.chromosomes[i][g.tasks[cr_point]]} 
-            C2 = {g.tasks[cr_point+1]} : {g.chromosomes[i][g.tasks[cr_point+1]]}
+            C2 = {g.tasks[cr_point + 1]} : {g.chromosomes[i][g.tasks[cr_point + 1]]}
             in Chromosome[{i + 1}]
             {g.chromosomes[i + 1]}
             C1 = {g.tasks[cr_point]}: {g.chromosomes[i + 1][g.tasks[cr_point]]}
-            C2 = {g.tasks[cr_point+1]} : {g.chromosomes[i + 1][g.tasks[cr_point+1]]}""")
+            C2 = {g.tasks[cr_point + 1]} : {g.chromosomes[i + 1][g.tasks[cr_point + 1]]}""")
             g.chromosomes[i][g.tasks[cr_point]], g.chromosomes[i + 1][g.tasks[cr_point]] = g.chromosomes[i + 1][
                 g.tasks[cr_point]], g.chromosomes[i][g.tasks[cr_point]]
-            g.chromosomes[i][g.tasks[cr_point+1]], g.chromosomes[i + 1][g.tasks[cr_point+1]] = g.chromosomes[i + 1][
-                g.tasks[cr_point+1]], g.chromosomes[i][g.tasks[cr_point+1]]
+            g.chromosomes[i][g.tasks[cr_point + 1]], g.chromosomes[i + 1][g.tasks[cr_point + 1]] = g.chromosomes[i + 1][
+                g.tasks[cr_point + 1]], g.chromosomes[i][g.tasks[cr_point + 1]]
             print(f""" After CrossOver 
             in Chromosome[{i}]
             {g.chromosomes[i]}
             C1 = {g.tasks[cr_point]} : {g.chromosomes[i][g.tasks[cr_point]]}
-            C2 = {g.tasks[cr_point+1]} : {g.chromosomes[i][g.tasks[cr_point+1]]} 
+            C2 = {g.tasks[cr_point + 1]} : {g.chromosomes[i][g.tasks[cr_point + 1]]} 
             in Chromosome[{i + 1}]
             {g.chromosomes[i + 1]}
             C1 = {g.tasks[cr_point]} : {g.chromosomes[i + 1][g.tasks[cr_point]]}
-            C2 = {g.tasks[cr_point+1]} : {g.chromosomes[i + 1][g.tasks[cr_point+1]]}""")
+            C2 = {g.tasks[cr_point + 1]} : {g.chromosomes[i + 1][g.tasks[cr_point + 1]]}""")
         print()
         print("Chromosomes After CrossOver :")
         for i in range(g.n_chromosomes):
