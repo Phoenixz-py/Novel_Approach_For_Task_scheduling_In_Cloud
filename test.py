@@ -33,9 +33,8 @@ class Group:
     chromosomes = []
     vms = []
     tasks = []
-    n_chromosomes = 0
 
-    def __init__(self, vmlist=None, tasklist=None, n_chromosomes=3):
+    def __init__(self, n_chromosomes=3, vmlist=None, tasklist=None):
         self.n_chromosomes = n_chromosomes
         self.vms = vmlist
         self.tasks = tasklist
@@ -83,7 +82,7 @@ print("""
 
 
 n_groups = 1
-group_list = [Group(3)]  # main input
+group_list = [Group(10)]  # main input
 tg = n_tasks // n_groups
 
 for g in group_list:
