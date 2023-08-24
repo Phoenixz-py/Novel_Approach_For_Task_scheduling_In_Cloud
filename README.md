@@ -1,1 +1,1 @@
-# Novel Approach For Task Scheduling In Cloud
+# Novel Approach For Task Scheduling In Cloud Computing
