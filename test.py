@@ -171,8 +171,21 @@ for g in group_list:
         print("Chromosomes After CrossOver :")
         for i in range(g.n_chromosomes):
             print(f"Chromosome[{i}] = {g.chromosomes[i]}")
-
+        print("""
+         Mutation Process """)
+        for chromosome in g.chromosomes:
+            i = random.randrange(0, n_tasks)
+            j = random.randrange(0, n_tasks)
+            while i == j:  # ensures inequality
+                i = random.randrange(0, n_tasks - 1)
+                j = random.randrange(0, n_tasks - 1)
+            print(f"Before Swapping : {chromosome}")
+            chromosome[g.tasks[i]], chromosome[g.tasks[j]] = chromosome[g.tasks[j]], chromosome[g.tasks[i]]
+            print(f"After Swapping : {chromosome} Swapped at Position {i} & {j}")
+        print("""
+         After Mutation Process """)
+        for i in range(g.n_chromosomes):
+            print(f"Chromosome[{i}] = {g.chromosomes[i]}")
         epoch += 1
-
 print("""
 """)
