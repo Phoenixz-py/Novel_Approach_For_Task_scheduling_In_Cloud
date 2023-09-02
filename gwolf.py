@@ -10,8 +10,6 @@ tasks_execution_time = np.random.rand(num_tasks)
 vms_processing_speed = np.random.rand(num_vms)
 
 # Define the objective function to be optimized (e.g., makespan)
-
-
 def objective_function(schedule):
     makespan = 0
     vm_loads = np.zeros(num_vms)
@@ -36,35 +34,6 @@ def initialize_population(num_wolves, num_vms):
 def get_alpha_beta_delta_wolves(population, objective_function):
     sorted_population = sorted(population, key=lambda x: objective_function(x))
     return sorted_population[0], sorted_population[1], sorted_population[2]
-
-# def update_wolves(population, alpha, beta, delta, a=2):
-
-    updated_population = []
-
-    for wolf in population:
-        updated_wolf = wolf.copy()
-
-        for i in range(num_tasks):
-            A1 = 2 * a * random.random() - a  # Use random module here
-            C1 = 2 * random.random()
-            D_alpha = abs(C1 * alpha[i] - wolf[i])
-            X1 = alpha[i] - A1 * D_alpha
-
-            A2 = 2 * a * random.random() - a  # Use random module here
-            C2 = 2 * random.random()
-            D_beta = abs(C2 * beta[i] - wolf[i])
-            X2 = beta[i] - A2 * D_beta
-
-            A3 = 2 * a * random.random() - a  # Use random module here
-            C3 = 2 * random.random()
-            D_delta = abs(C3 * delta[i] - wolf[i])
-            X3 = delta[i] - A3 * D_delta
-
-            updated_wolf[i] = (X1 + X2 + X3) / 3
-
-        updated_population.append(updated_wolf)
-
-    return updated_population
 
 
 def update_wolves(population, alpha, beta, delta, a=2):
@@ -146,8 +115,6 @@ best_schedule, best_objective_value = grey_wolf_optimization(
     num_iterations=100)
 
 # Function to print detailed task-to-VM assignment
-
-
 def print_task_assignment(schedule):
     for task_id, vm_id in enumerate(schedule):
         print(f"Task {task_id} is assigned to VM {vm_id}.")
