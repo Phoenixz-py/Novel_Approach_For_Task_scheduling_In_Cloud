@@ -1,15 +1,14 @@
 import random
 import numpy as np
 
-# Define the cloud task scheduling problem
-# Customize these values according to your problem
+
 num_tasks = 5
 num_vms = 10
 
 tasks_execution_time = np.random.rand(num_tasks)
 vms_processing_speed = np.random.rand(num_vms)
 
-# Define the objective function to be optimized (e.g., makespan)
+#makespan
 def objective_function(schedule):
     makespan = 0
     vm_loads = np.zeros(num_vms)
