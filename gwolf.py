@@ -2,32 +2,23 @@ import random
 import numpy as np
 
 
-num_tasks = 5
-num_vms = 10
 
-tasks_execution_time = np.random.rand(num_tasks)
-vms_processing_speed = np.random.rand(num_vms)
 
 #makespan
 def objective_function(schedule):
-    makespan = 0
     vm_loads = np.zeros(num_vms)
 
     for task_id, vm_id in enumerate(schedule):
-        # Use modulo to ensure valid VM indices
-        vm_id %= num_vms
-
-        execution_time = tasks_execution_time[task_id] / \
-            vms_processing_speed[vm_id]
-        vm_loads[vm_id] += execution_time
-        if execution_time > makespan:
-            makespan = execution_time
+        start_time = max(vm_loads[vm_id],0)
+        execution_time = start_time + tasks_length[task_id] / vms_processing_speed[vm_id]
+        vm_loads[vm_id] = execution_time
+    makespan = max(vm_loads)
 
     return makespan
 
 
-def initialize_population(num_wolves, num_vms):
-    return [np.array([random.randint(0, num_vms - 1) % num_vms for _ in range(num_tasks)]) for _ in range(num_wolves)]
+def initialize_population(num_wolves, num_vms,num_tasks):
+    return [np.array([random.randint(0, num_vms - 1) for _ in range(num_tasks)]) for _ in range(num_wolves)]
 
 
 def get_alpha_beta_delta_wolves(population, objective_function):
@@ -66,15 +57,14 @@ def update_wolves(population, alpha, beta, delta, a=2):
 
 
 def grey_wolf_optimization(num_iterations):
-    population = initialize_population(num_wolves=20, num_vms=num_vms)
+    population = initialize_population(num_wolves=20, num_vms=num_vms,num_tasks=num_tasks)
 
     for iteration in range(num_iterations):
         # Create a list to store task-to-VM mappings for each wolf
         population_mapping = []
 
         for wolf in population:
-            alpha, beta, delta = get_alpha_beta_delta_wolves(
-                population, objective_function)
+            alpha, beta, delta = get_alpha_beta_delta_wolves(population, objective_function)
             wolf = update_wolves([wolf], alpha, beta, delta)[0]
 
             # After convergence, alpha represents the best solution found
@@ -110,15 +100,22 @@ def grey_wolf_optimization(num_iterations):
 
 
 # usage
-best_schedule, best_objective_value = grey_wolf_optimization(
-    num_iterations=100)
+
 
 # Function to print detailed task-to-VM assignment
 def print_task_assignment(schedule):
     for task_id, vm_id in enumerate(schedule):
         print(f"Task {task_id} is assigned to VM {vm_id}.")
 
+num_tasks = 10
+num_vms = 5
+
+tasks_length = [random.randint(5000, 8000) for i in range(num_tasks)]
+vms_processing_speed = [random.randint(3000, 6000) for i in range(num_vms)]
+
+best_schedule, best_objective_value = grey_wolf_optimization(num_iterations=100)
 
 print("\nFinal Best Schedule:", best_schedule)
 print("Best Objective Value:", best_objective_value)
 print_task_assignment(best_schedule)
+
