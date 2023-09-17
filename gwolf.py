@@ -2,13 +2,40 @@ import random
 import matplotlib.pyplot as plt
 
 
-def objective_function(schedule):
-    vm_loads = [0 for _ in range(num_vms)]
+class Task:
+    def __init__(self, task_id, length, at=0, deadline=0):
+        self.id = task_id
+        self.at = at
+        self.length = length
+        self.deadline = deadline
+
+    def __str__(self):
+        return "Task " + str(self.id)
+
+    def __repr__(self):
+        return "Task " + str(self.id)
+
+
+class VM:
+    def __init__(self, vm_id, mips, cost=1000, energy=1000):
+        self.id = vm_id
+        self.mips = mips
+        self.energy = energy
+        self.cost = cost
+
+    def __str__(self):
+        return "VM " + str(self.id)
+
+    def __repr__(self):
+        return "VM " + str(self.id)
+
+
+def objective_function(schedule, tasks, vms):
+    vm_loads = [0 for _ in range(len(vms))]
 
     for task_id, vm_id in enumerate(schedule):
-        start_time = max(vm_loads[vm_id], 0)
-        execution_time = start_time + \
-            tasks_length[task_id] / vms_processing_speed[vm_id]
+        start_time = max(vm_loads[vm_id], tasks[task_id].at)
+        execution_time = start_time + tasks[task_id].length / vms[vm_id].mips
         vm_loads[vm_id] = execution_time
     makespan = max(vm_loads)
 
@@ -16,11 +43,16 @@ def objective_function(schedule):
 
 
 def initialize_population(num_wolves, num_vms, num_tasks):
-    return [[random.randint(0, num_vms - 1) for _ in range(num_tasks)] for _ in range(num_wolves)]
+    population = []
+    for _ in range(num_wolves):
+        schedule = [random.randint(0, num_vms - 1) for _ in range(num_tasks)]
+        population.append(schedule)
+    return population
 
 
-def get_alpha_beta_delta_wolves(population, objective_function):
-    sorted_population = sorted(population, key=lambda x: objective_function(x))
+def get_alpha_beta_delta_wolves(population, tasks, vms):
+    sorted_population = sorted(
+        population, key=lambda x: objective_function(x, tasks, vms))
     return sorted_population[0], sorted_population[1], sorted_population[2]
 
 
@@ -79,42 +111,29 @@ def update_wolf(wolf, alpha, beta, delta, num_vms):
     return updated_wolf
 
 
-def grey_wolf_optimization(num_iterations):
-    population = initialize_population(
-        num_wolves=num_wolves, num_vms=num_vms, num_tasks=num_tasks)
-    alpha, beta, delta = get_alpha_beta_delta_wolves(
-        population, objective_function)
-    best_schedule = None
-    best_objective_value = None
-    convergence_curve = []  # List to store objective values
+def grey_wolf_optimization(num_iterations, num_wolves, num_vms, num_tasks, tasks, vms):
+    population = initialize_population(num_wolves, num_vms, num_tasks)
+    alpha, beta, delta = get_alpha_beta_delta_wolves(population, tasks, vms)
+    best_schedule = alpha
+    best_objective_value = objective_function(alpha, tasks, vms)
+    convergence_curve = []
 
     for iteration in range(num_iterations):
-        population_mapping = []
-
         for i in range(len(population)):
             population[i] = update_wolf(
                 population[i], alpha, beta, delta, num_vms)
 
         alpha, beta, delta = get_alpha_beta_delta_wolves(
-            population, objective_function)
-        best_schedule = alpha
-        best_objective_value = objective_function(alpha)
-        # Append objective value
+            population, tasks, vms)
+
+        if objective_function(alpha, tasks, vms) < best_objective_value:
+            best_schedule = alpha
+            best_objective_value = objective_function(alpha, tasks, vms)
+
         convergence_curve.append(best_objective_value)
 
-        task_to_vm_mapping = {}
-        for task_id, vm_id in enumerate(best_schedule):
-            if vm_id in task_to_vm_mapping:
-                task_to_vm_mapping[vm_id].append(task_id)
-            else:
-                task_to_vm_mapping[vm_id] = [task_id]
-
-        population_mapping.append(task_to_vm_mapping)
-
-        print(f"Iteration {iteration + 1} Population Mapping:")
-        for i, mapping in enumerate(population_mapping):
-            print(f"  Wolf {i}: {mapping}")
-        print(f"Objective Function Value is {objective_function(alpha)}")
+        print(
+            f"Iteration {iteration + 1}: Best Objective Value is {best_objective_value}")
 
     return best_schedule, best_objective_value, convergence_curve
 
@@ -123,7 +142,7 @@ def print_task_assignment(schedule):
     for task_id, vm_id in enumerate(schedule):
         print(f"Task {task_id} is assigned to VM {vm_id}.")
 
-# Plotting function
+
 def plot_convergence(convergence_curve):
     plt.plot(convergence_curve)
     plt.xlabel('Iteration')
@@ -137,15 +156,15 @@ num_tasks = 2000
 num_vms = 200
 num_wolves = 50
 
-tasks_length = [random.randint(5000, 8000) for i in range(num_tasks)]
-vms_processing_speed = [random.randint(3000, 6000) for j in range(num_vms)]
+tasks = [Task(i, random.randint(5000, 8000)) for i in range(num_tasks+1)]
+vms = [VM(j, random.randint(3000, 6000)) for j in range(num_vms)]
 
 best_schedule, best_objective_value, convergence_curve = grey_wolf_optimization(
-    num_iterations=200)
+    num_iterations=300, num_wolves=num_wolves, num_vms=num_vms, num_tasks=num_tasks, tasks=tasks, vms=vms)
 
-print("\nFinal Best Schedule:", best_schedule)
-print("Best Objective Value:", best_objective_value)
+print("\nFinal Best Schedule:")
 print_task_assignment(best_schedule)
+print("Best Objective Value:", best_objective_value)
 
 # Call the plot_convergence function to plot the convergence curve
 plot_convergence(convergence_curve)
